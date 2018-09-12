@@ -360,20 +360,9 @@ function asyncRun() {
     })
     .then(function() {
       if (network === 'regtest') {
-        return new Promise(res => {
-          const recursiveReadLine = function () {
-            rl.question('Regtest detected: How many blocks are we generating? (default 500): ', function(input) {
-              if (!(parseInt(input))) {
-                logger.error('Failed to parse input');
-                return recursiveReadLine();
-              }
-              escape = true;
-              let blocks = parseInt(input);
+        return new Promise(res => {          
               generateBlocks(blocks, res);
-            });
-          };
-          recursiveReadLine();
-        })
+            });         
       }
     })
     .then(function() {
@@ -382,18 +371,9 @@ function asyncRun() {
       });
     })
     .then(function() {
-      return new Promise(res => {
-        const recursiveReadLine = function () {
-          rl.question('How many P2SH UTXOs are we generating mate (input x 1000)? : ', function(input) {
-            if (!(parseInt(input))) {
-              logger.error('Failed to parse input');
-              return recursiveReadLine();
-            }
-            p2shUtxos = parseInt(input) * 1000;
-            res();
-          });
-        };
-        recursiveReadLine();
+      return new Promise(res => {        
+            p2shUtxos = 1000 * 1000;
+            res();         
       })
     })
     .then(function() {
@@ -413,9 +393,9 @@ function asyncRun() {
     })
     .then(function() {
       return new Promise(res => {
-        rl.question('Press enter to broadcast transactions: ', function() {
+        
           broadcastTransactions(res);
-        });
+        
       });
     })
     .then(function() {
@@ -425,25 +405,18 @@ function asyncRun() {
           generateBlocks(p2shUtxos/1000, res);
         }
         else {
-          rl.question('Wait for transactions to confirm before continuing. Press enter to continue: ', function() {
+          setTimeout(()=>{
             res();
-          });
+          },15*60000 ) // Wait 15min for a block confirm        
         }
       })
     })
     .then(function() {
       return new Promise(res => {
-        const recursiveReadLine = function () {
-          rl.question('How many P2SH inputs should we include per transaction (default 25)?: ', function(input) {
-            if (!(parseInt(input)) || parseInt(input) > p2shUtxos) {
-              logger.error('Failed to parse input (are you sure we have enough P2SH UTXOs generated?)');
-              return recursiveReadLine();
-            }
-            p2shTxs = parseInt(input);
+        
+            p2shTxs = 25;
             res();
-          });
-        };
-        recursiveReadLine();
+        
       })
     })
     .then(function() {
