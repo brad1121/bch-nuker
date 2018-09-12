@@ -11,7 +11,7 @@ bitcoincashjs.Transaction.FEE_PER_KB = 50000;
 // Bitcoind configuration
 // Mainnet port: 8332
 // Testnet/Regtest port: 18332
-const config = {
+let config = {
   protocol: 'http',
   user: 'user',
   pass: 'passasdasdsa123',
@@ -42,6 +42,11 @@ const rl = readline.createInterface({
 });
 
 const rpc = new bitcoind(config);
+module.exports = function(){
+ function setConfig(obj){
+    config = obj;
+    config.protocol = 'http';
+ } 
 
 function generateBlocks(num, callback) {
   logger.info('Generating ' + num + ' block(s)... ');
@@ -528,4 +533,5 @@ function asyncRun() {
     });
   });
 }
-asyncRun();
+  
+}
